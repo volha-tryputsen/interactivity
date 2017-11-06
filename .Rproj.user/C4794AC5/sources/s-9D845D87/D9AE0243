@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "0",
+    "hash" : "973966523",
     "id" : "D9AE0243",
-    "lastKnownWriteTime" : 1509993349,
-    "last_content_update" : 1509993349551,
-    "path" : "~/Documents/ColumbiaUniversity/2017_2_DataScience/Lectures/interactivity/shiny_dashboard_template.Rmd",
-    "project_path" : "shiny_dashboard_template.Rmd",
+    "lastKnownWriteTime" : 1509995715,
+    "last_content_update" : 1509995715740,
+    "path" : "~/Documents/ColumbiaUniversity/2017_2_DataScience/Lectures/interactivity/shiny_dashboard.Rmd",
+    "project_path" : "shiny_dashboard.Rmd",
     "properties" : {
-        "cursorPosition" : "108,30",
-        "scrollLine" : "100"
+        "cursorPosition" : "1,23",
+        "scrollLine" : "0"
     },
     "relative_order" : 2,
     "source_on_save" : false,

@@ -1,0 +1,185 @@
+---
+title: "Tidy text"
+author: "Volha Tryputsen"
+date: "November , 2017"
+output: 
+  html_document:
+    theme: cosmo
+    highlight: haddock
+    toc: true
+    toc_float:
+      collapse: true
+      smooth_scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+library(tidyverse)
+library(tidytext)
+
+library(stringr)
+library(forcats) 
+library(viridis) # better colors for ggplot
+```
+
+# load data
+
+```{r}
+nyc_inspections = read_csv("./data/DOHMH_New_York_City_Restaurant_Inspection_Results.csv", 
+                           col_types = cols(building = col_character()),
+                           na = c("NA", "N/A")) %>% 
+  filter(grade %in% c("A", "B", "C")) %>% 
+  mutate(inspection_num = row_number(),
+         boro = str_to_title(boro)) %>% 
+  select(inspection_num, boro, grade, score, critical_flag, dba, cuisine_description, zipcode, violation_description)
+```
+
+
+# extract words = tidy text   
+
+* **unnest_tokens()**
+
+```{r}
+inspection_words = 
+  nyc_inspections %>% 
+  unnest_tokens(word, violation_description)
+```
+
+
+# remove stop words  
+
+* **anti_join()**  
+
+```{r}
+#load stop_words dataset - it is inside tidytext library
+data(stop_words)
+
+inspection_words = 
+  anti_join(inspection_words, stop_words)
+```
+
+
+# barplot of words count  
+
+* **count()**  
+* **top_n()** - extract top rows   
+* **fct_reorder()** - reorder variable accordingto other variable   
+
+```{r}
+inspection_words %>% 
+  count(word, sort = TRUE) %>% 
+  top_n(10) %>% 
+  mutate(word = fct_reorder(word, n)) %>% 
+  ggplot(aes(x = word, y = n)) + 
+  geom_bar(stat = "identity", fill = "blue", alpha = .6) + 
+  coord_flip()
+```
+
+
+# comparison using relative frequencies (OR)   
+approximate odd ratios, because we add *1*  
+OR meaning is on minut 59 of lecture recording  
+
+```{r}
+word_ratios = 
+  inspection_words %>%
+  filter(grade %in% c("A", "C")) %>% 
+  count(word, grade) %>%
+  #witin word calculate the sum of n
+  group_by(word) %>% 
+  filter(sum(n) >= 5) %>%
+  ungroup() %>%
+  spread(grade, n, fill = 0) %>%
+  mutate(
+    C_odds = (C + 1) / (sum(C) + 1),
+    A_odds = (A + 1) / (sum(A) + 1),
+    log_OR = log(C_odds / A_odds)) %>%
+  arrange(desc(log_OR)) 
+```
+
+# visualize OR  
+
+* **geom_col()** similar to geom_bar    
+* **fct_reorder()**  
+
+```{r}
+word_ratios %>%
+  mutate(pos_log_OR = ifelse(log_OR > 0, "C > A", "A > C")) %>% 
+  group_by(pos_log_OR) %>%
+  top_n(15, abs(log_OR)) %>%
+  ungroup() %>%
+  mutate(word = fct_reorder(word, log_OR)) %>%
+  ggplot(aes(word, log_OR, fill = pos_log_OR)) +
+  geom_col() +
+  coord_flip() +
+  ylab("log odds ratio (C/A)") +
+  scale_fill_discrete(name = "")
+```
+
+# sentiment analysis
+
+Will map words into positive or negative words  
+
+* **get_sentiments()** sentiment map  
+
+```{r}
+bing_sentiments = 
+  get_sentiments("bing")
+```
+
+## join sentiments to words  
+
+* **inner_join** - find overlap between our data and sintiment map  
+
+Calculate total positive or negative sentiment score for each inspection  
+
+```{r}
+inspection_sentiments = 
+  inspection_words %>% 
+  inner_join(., bing_sentiments) %>% 
+  count(inspection_num, sentiment) %>% 
+  spread(sentiment, n, fill = 0) %>% 
+  mutate(sentiment = positive - negative) %>% 
+  select(inspection_num, sentiment)
+```
+
+* **right_join()**  
+
+```{r}
+inspection_sentiments = 
+  right_join(nyc_inspections, inspection_sentiments, 
+             by = "inspection_num")
+```
+
+## make a plot of sentiments  
+
+* **sample_n()**  
+* **str_c()**  
+* **scale_fill_viridis()**  - change default color theme  
+* **scale_color_viridis()** 
+
+```{r}
+set.seed(1)
+
+inspection_sentiments %>% 
+  filter(boro == "Manhattan") %>% 
+  sample_n(5000) %>% 
+  mutate(inspection_num = str_c("Inspection ", inspection_num),
+    inspection_num = fct_reorder(inspection_num, sentiment)) %>% 
+  ggplot(aes(x = inspection_num, 
+             y = sentiment, fill = grade, color = grade)) + 
+  geom_bar(stat = "identity") + 
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) +
+  scale_fill_viridis(discrete = TRUE) + 
+  scale_color_viridis(discrete = TRUE) 
+```
+
+Not very informative plot  
+
+
+

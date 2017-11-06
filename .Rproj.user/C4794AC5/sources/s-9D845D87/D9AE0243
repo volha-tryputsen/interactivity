@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1509992092764.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "D9AE0243",
+    "lastKnownWriteTime" : 1509993349,
+    "last_content_update" : 1509993349551,
+    "path" : "~/Documents/ColumbiaUniversity/2017_2_DataScience/Lectures/interactivity/shiny_dashboard_template.Rmd",
+    "project_path" : "shiny_dashboard_template.Rmd",
+    "properties" : {
+        "cursorPosition" : "108,30",
+        "scrollLine" : "100"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

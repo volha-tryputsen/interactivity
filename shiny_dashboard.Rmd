@@ -21,7 +21,7 @@ library(plotly)
 # load the data
 set.seed(1)
 
-airbnb_data = read_csv("./data/nyc_airbnb.csv") %>%
+airbnb_data = read_csv("./data/nyc_airbnb.csv.zip") %>%
   clean_names() %>%
   mutate(rating = review_scores_location / 2) %>%
   select(boro = neighbourhood_group, neighbourhood, rating, price, room_type,

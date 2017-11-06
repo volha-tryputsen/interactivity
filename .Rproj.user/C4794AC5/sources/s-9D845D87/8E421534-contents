@@ -21,7 +21,8 @@ library(plotly)
 ```
 
 ```{r}
-airbnb = read_csv("./data/nyc_airbnb.zip") %>% 
+airbnb = 
+  read_csv("./data/nyc_airbnb.csv.zip") %>% 
   clean_names() %>% 
   rename(boro = neighbourhood_group) %>% 
   mutate(rating = review_scores_location / 2) %>% 

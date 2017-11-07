@@ -3,8 +3,8 @@ output_dir: "."
 navbar:
   title: "Home"
   right:
-    - text: "About"
-      href: about.html
+    - text: "airbnb dashboard"
+      href: airbnb_dashboard.html
     - icon: fa-envelope fa-lg
       href: mailto:<volha.tryputsen@gmail.com>
     - icon: fa-github fa-lg

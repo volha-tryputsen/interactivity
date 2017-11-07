@@ -1,10 +1,12 @@
 name: "Yay internet!"
 output_dir: "."
 navbar:
-  title: "Home"
+  title: "Interactivity"
   right:
     - text: "airbnb dashboard"
       href: airbnb_dashboard.html
+    - text: "plotly"
+      href: plotly.html
     - icon: fa-envelope fa-lg
       href: mailto:<volha.tryputsen@gmail.com>
     - icon: fa-github fa-lg
